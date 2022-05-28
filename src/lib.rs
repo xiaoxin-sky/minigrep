@@ -21,12 +21,16 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(args: &[String]) -> Result<Config, &'static str> {
-        if args.len() < 3 {
-            return Err("参数不正确");
-        }
-        let query = args[1].clone();
-        let filename = args[2].clone();
+    pub fn new(mut args: env::Args) -> Result<Config, &'static str> {
+        args.next();
+        let query = match args.next() {
+            Some(arg) => arg,
+            None => return Err("没有输入查询字符串名称"),
+        };
+        let filename = match args.next() {
+            Some(arg) => arg,
+            None => return Err("没有输入文件名"),
+        };
         let case_insensitive = env::var("CASE_INSENSITIVE").is_err();
         Ok(Config {
             query,
@@ -81,22 +85,15 @@ Trust me.";
 }
 
 pub fn search<'a>(query: &str, content: &'a str) -> Vec<&'a str> {
-    let mut res = Vec::new();
-    for line in content.lines() {
-        if line.contains(query) {
-            res.push(line);
-        }
-    }
-    res
+    content
+        .lines()
+        .filter(|line| line.contains(query))
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &str, contains: &'a str) -> Vec<&'a str> {
-    let query = query.to_lowercase();
-    let mut res = vec![];
-    for line in contains.lines() {
-        if line.to_lowercase().contains(&query) {
-            res.push(line);
-        }
-    }
-    res
+    contains
+        .lines()
+        .filter(|line| line.to_lowercase().contains(&query))
+        .collect()
 }

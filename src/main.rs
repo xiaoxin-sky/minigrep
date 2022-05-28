@@ -4,8 +4,7 @@ use std::process;
 use minigrep::{run, Config};
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
-    let config = Config::new(&args).unwrap_or_else(|error| {
+    let config = Config::new(env::args()).unwrap_or_else(|error| {
         eprintln!("出错了：{}", error);
         process::exit(0);
     });
