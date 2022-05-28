@@ -23,7 +23,7 @@ pub struct Config {
 impl Config {
     pub fn new(args: &[String]) -> Result<Config, &'static str> {
         if args.len() < 3 {
-            return Err("ss");
+            return Err("参数不正确");
         }
         let query = args[1].clone();
         let filename = args[2].clone();
